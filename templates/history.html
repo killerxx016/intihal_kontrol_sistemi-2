@@ -1,0 +1,69 @@
+<!-- history.html -->
+{% extends "layout.html" %}
+
+{% block title %}Geçmiş{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden p-8">
+    <h2 class="text-2xl font-bold mb-6 text-indigo-700">
+        <i class="fas fa-history mr-2"></i>Karşılaştırma Geçmişi
+    </h2>
+
+    {% include '_messages.html' %}
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                    {% if session.role == 'teacher' %}
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Öğrenci</th>
+                    {% endif %}
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Benzerlik</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for comparison in history %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ comparison.created_at }}
+                    </td>
+                    {% if session.role == 'teacher' %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {{ comparison.user }}
+                    </td>
+                    {% endif %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {% if comparison.score >= 75 %}text-red-600{% elif comparison.score >= 45 %}text-yellow-600{% else %}text-green-600{% endif %}">
+                        {{ comparison.score }}%
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {% if comparison.score >= 75 %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                            Yüksek Risk
+                        </span>
+                        {% elif comparison.score >= 45 %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            Orta Risk
+                        </span>
+                        {% else %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Düşük Risk
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if session.role == 'teacher' %}
+    <form method="POST" action="{{ url_for('clear_history') }}" class="mt-6">
+        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors">
+            <i class="fas fa-trash-alt mr-2"></i>Geçmişi Temizle
+        </button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

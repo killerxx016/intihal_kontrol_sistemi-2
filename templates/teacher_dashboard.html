@@ -1,0 +1,113 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}Öğrenci Paneli{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-indigo-700">
+                <i class="fas fa-user-graduate mr-3"></i>Öğrenci Paneli
+            </h1>
+            <p class="text-gray-600 mt-2">Hoşgeldiniz, <span class="font-semibold text-indigo-600">{{ session.username }}</span></p>
+        </div>
+        <div class="mt-4 md:mt-0">
+            <a href="{{ url_for('compare') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                <i class="fas fa-plus-circle mr-2"></i> Yeni Karşılaştırma
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-indigo-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-indigo-100 text-indigo-600 mr-4">
+                    <i class="fas fa-file-alt text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Toplam Karşılaştırma</p>
+                    <p class="text-2xl font-bold">{{ total_comparisons }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                    <i class="fas fa-check-circle text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Başarılı Analiz</p>
+                    <p class="text-2xl font-bold">{{ total_comparisons - (recent_comparisons | selectattr('score', '>=', 75) | list | length) }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-green-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                    <i class="fas fa-chart-line text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Ortalama Özgünlük</p>
+                    <p class="text-2xl font-bold">
+                        {% if recent_comparisons %}
+                        {{ (recent_comparisons | map(attribute='score') | sum / recent_comparisons | length) | round(1) }}%
+                        {% else %}0%{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- إضافات الأزرار التفاعلية -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <a href="{{ url_for('comparison_detail', comparison_id=comparison.id) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                <i class="fas fa-eye mr-2"></i> İncele
+            </a>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <a href="{{ url_for('student_method') }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                <i class="fas fa-users mr-2"></i> Öğrenci Yöntemi
+            </a>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <a href="{{ url_for('profile') }}" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                <i class="fas fa-user-circle mr-2"></i> Profil
+            </a>
+        </div>
+    </div>
+
+    <!-- عرض تحليل أداء الطالب -->
+    <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+        <h3 class="text-lg font-medium text-gray-900">Öğrenci Performans Analizi</h3>
+        <!-- هنا يمكن عرض تحليل الأداء بناءً على المقارنات -->
+        <p>Öğrencinin genel performansı hakkında daha fazla bilgi burada gösterilecek.</p>
+    </div>
+
+    <!-- الأزرار لإنشاء واجبات وتقارير -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <a href="{{ url_for('create_assignment') }}" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                <i class="fas fa-plus-circle mr-2"></i> Yeni Ödev Oluştur
+            </a>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <a href="{{ url_for('create_report') }}" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                <i class="fas fa-clipboard-list mr-2"></i> Rapor Oluştur
+            </a>
+        </div>
+    </div>
+
+    <!-- الحالات المشبوهة -->
+    <div class="bg-white p-6 rounded-xl shadow-md mt-8">
+        <a href="{{ url_for('suspicious_cases') }}" class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+            <i class="fas fa-exclamation-triangle mr-2"></i> Şüpheli Durumlar
+        </a>
+    </div>
+</div>
+{% endblock %}
