@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block title %}Geçmiş Kayıtlar{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden p-8">
+    <a href="{{ url_for(session['role'] + '_dashboard') if 'role' in session else url_for('index')}}"
+       class="inline-block mb-6 bg-indigo-100 text-indigo-600 px-4 py-2 rounded-full hover:bg-indigo-200 transition-all">
+        <i class="fas fa-arrow-left mr-2"></i>Geri
+    </a>
+
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-indigo-700">
+            <i class="fas fa-history mr-2"></i>Geçmiş Kayıtlar
+        </h2>
+        {% if session.get('role') == 'teacher' %}
+        <button onclick="clearHistory()" class="bg-red-100 text-red-600 px-4 py-2 rounded-full hover:bg-red-200 transition-all">
+            <i class="fas fa-trash-alt mr-2"></i>Temizle
+        </button>
+        {% endif %}
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ödev 1</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ödev 2</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Benzerlik</th>
+                    {% if session.get('role') == 'teacher' %}
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kullanıcı</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for record in history %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ record.date }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ record.text1|truncate(50) }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ record.text2|truncate(50) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 rounded-full text-xs font-bold
+                              {% if record.score>
+                            = 75 %}bg-red-100 text-red-800
+                            {% elif record.score >= 45 %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-green-100 text-green-800{% endif %}">
+                            {{ record.score }}%
+                        </span>
+                    </td>
+                    {% if session.get('role') == 'teacher' %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ record.user }}</td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">Henüz kayıt bulunmamaktadır</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function clearHistory() {
+    if (confirm('Tüm geçmişi silmek istediğinize emin misiniz?')) {
+        fetch("{{ url_for('clear_history') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => location.reload())
+        .catch(error => console.error('Error:', error));
+    }
+}
+</script>
+{% endblock %}
