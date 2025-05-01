@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Ödev Analiz{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #6b73ff 0%, #000dff 100%);
+            min-height: 100vh;
+        }
+
+        .page-content {
+            min-height: calc(100vh - 120px);
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="gradient-bg flex flex-col">
+    <nav class="bg-white shadow-sm py-3 px-6">
+        <div class="flex justify-between items-center max-w-7xl mx-auto">
+            <a href="{{ url_for('index') }}" class="flex items-center">
+                <i class="fas fa-robot text-indigo-600 text-2xl mr-2"></i>
+                <span class="text-xl font-bold text-indigo-700">AI Ödev Analiz</span>
+            </a>
+            <div class="flex items-center space-x-4">
+                {% if 'username' in session %}
+                {% if session.role == 'teacher' %}
+                <a href="{{ url_for('index') }}" class="text-indigo-600 hover:text-indigo-800">
+                    <i class="fas fa-home"></i> Ana Sayfa
+                </a>
+                <a href="{{ url_for('compare') }}" class="text-indigo-600 hover:text-indigo-800">
+                    <i class="fas fa-balance-scale"></i> Karşılaştır
+                </a>
+                <a href="{{ url_for('history') }}" class="text-indigo-600 hover:text-indigo-800">
+                    <i class="fas fa-history"></i> Geçmiş
+                </a>
+                {% else %}
+                <a href="{{ url_for('index') }}" class="text-indigo-600 hover:text-indigo-800">
+                    <i class="fas fa-home"></i> Ana Sayfa
+                </a>
+                {% endif %}
+                <span class="text-gray-600">{{ session.username }}</span>
+                <a href="{{ url_for('logout') }}" class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-sign-out-alt"></i> Çıkış
+                </a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="text-indigo-600 hover:text-indigo-800">
+                    <i class="fas fa-sign-in-alt"></i> Giriş
+                </a>
+                <a href="{{ url_for('register') }}" class="text-green-600 hover:text-green-800">
+                    <i class="fas fa-user-plus"></i> Kayıt
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="page-content flex-grow p-6">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="max-w-7xl mx-auto mb-6">
+            {% for category, message in messages %}
+            <div class="p-4 rounded-lg alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

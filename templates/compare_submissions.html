@@ -1,0 +1,43 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}Gönderimleri Karşılaştır{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-indigo-700">
+            <i class="fas fa-not-equal mr-2"></i>Gönderim Karşılaştırma
+        </h1>
+        <a href="{{ url_for('teacher_dashboard') }}" class="text-indigo-600 hover:text-indigo-800">
+            <i class="fas fa-arrow-left mr-1"></i> Geri Dön
+        </a>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex items-center justify-center mb-6">
+            <div class="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
+                <div class="h-full {% if score >= 75 %}bg-red-500{% elif score >= 45 %}bg-yellow-500{% else %}bg-green-500{% endif %}"
+                     style="width: {{ score if score <= 100 else 100 }}%"></div>
+            </div>
+            <span class="ml-4 font-bold {% if score >= 75 %}text-red-600{% elif score >= 45 %}text-yellow-600{% else %}text-green-600{% endif %}">
+                {{ score }}% benzerlik
+            </span>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-semibold text-lg mb-2">Gönderim 1</h3>
+                <div class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap max-h-96 overflow-y-auto">
+                    {{ text1 or "İçerik bulunamadı" }}
+                </div>
+            </div>
+            <div>
+                <h3 class="font-semibold text-lg mb-2">Gönderim 2</h3>
+                <div class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap max-h-96 overflow-y-auto">
+                    {{ text2 or "İçerik bulunamadı" }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

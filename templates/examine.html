@@ -1,0 +1,74 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}Gönderimi İncele - {{ submission.assignment_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-indigo-700">
+            <i class="fas fa-search mr-2"></i>Ödev İnceleme
+        </h1>
+        <a href="{{ url_for('teacher_dashboard') }}" class="text-indigo-600 hover:text-indigo-800">
+            <i class="fas fa-arrow-left mr-1"></i> Geri Dön
+        </a>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <h2 class="text-xl font-semibold">{{ submission.assignment_name }}</h2>
+                <p class="text-gray-600">{{ submission.student_name }}</p>
+            </div>
+            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">
+                {{ submission.submitted_at|datetimeformat }}
+            </span>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-lg mb-6">
+            <h3 class="font-medium text-gray-700 mb-2">Ödev İçeriği:</h3>
+            <div class="whitespace-pre-wrap bg-white p-4 rounded border max-h-96 overflow-y-auto">
+                {{ submission_text or "İçerik bulunamadı" }}
+            </div>
+        </div>
+
+        <a href="{{ url_for('download_submission', submission_id=submission.id) }}"
+           class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+            <i class="fas fa-download mr-2"></i> Dosyayı İndir
+        </a>
+    </div>
+
+    {% if similar_submissions %}
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-semibold text-indigo-700 mb-4">
+            <i class="fas fa-balance-scale mr-2"></i> Benzer Gönderimler
+        </h2>
+
+        <div class="space-y-4">
+            {% for sub in similar_submissions %}
+            <div class="border rounded-lg p-4 hover:bg-gray-50">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="font-medium">{{ sub.student_name }}</h3>
+                        <p class="text-sm text-gray-500">{{ sub.submitted_at|datetimeformat }}</p>
+                    </div>
+                    <span class="bg-{% if sub.similarity > 75 %}red{% elif sub.similarity > 45 %}yellow{% else %}green{% endif %}-100 text-{% if sub.similarity > 75 %}red{% elif sub.similarity > 45 %}yellow{% else %}green{% endif %}-800 px-2 py-1 rounded-full text-xs">
+                        {{ sub.similarity }}% benzerlik
+                    </span>
+                </div>
+                <div class="mt-2 flex space-x-2">
+                    <a href="{{ url_for('examine_submission', submission_id=sub.id) }}"
+                       class="text-sm text-indigo-600 hover:text-indigo-800">
+                        <i class="fas fa-search mr-1"></i> İncele
+                    </a>
+                    <a href="{{ url_for('compare_submissions', submission1_id=submission.id, submission2_id=sub.id) }}"
+                       class="text-sm text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-not-equal mr-1"></i> Karşılaştır
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

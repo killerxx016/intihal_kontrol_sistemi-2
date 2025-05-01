@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block title %}AI Ödev Analiz Sistemi{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl overflow-hidden mx-auto my-8">
+    <div class="bg-gradient-to-r from-indigo-700 to-blue-800 text-white p-6 text-center">
+        <h1 class="text-3xl font-bold">AI Ödev Analiz Sistemi</h1>
+        <p class="mt-2 opacity-90">Ödevlerinizin özgünlüğünü anında kontrol edin</p>
+    </div>
+
+    <div class="flex border-b">
+        <a href="{{ url_for('index') }}" class="flex-1 py-4 text-center font-medium text-indigo-600 border-b-2 border-indigo-600">
+            <i class="fas fa-home mr-2"></i>Ana Sayfa
+        </a>
+        {% if 'username' in session and session.role == 'teacher' %}
+        <a href="{{ url_for('compare') }}" class="flex-1 py-4 text-center font-medium text-gray-500 hover:text-indigo-500 transition-colors">
+            <i class="fas fa-balance-scale mr-2"></i>Karşılaştır
+        </a>
+        <a href="{{ url_for('history') }}" class="flex-1 py-4 text-center font-medium text-gray-500 hover:text-indigo-500 transition-colors">
+            <i class="fas fa-history mr-2"></i>Geçmiş
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="p-8">
+        <div class="grid md:grid-cols-2 gap-8">
+            {% if 'username' not in session or session.role == 'teacher' %}
+            <a href="{{ url_for('compare') }}" class="block bg-white rounded-lg border border-gray-200 p-6 text-center hover:border-indigo-400 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                <div class="text-indigo-600 text-5xl mb-4">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Ödevleri Karşılaştır</h3>
+                <p class="text-gray-600 mb-4">İki ödevin benzerlik oranını analiz edin</p>
+                <span class="inline-block bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors">
+                    Başla <i class="fas fa-arrow-right ml-2"></i>
+                </span>
+            </a>
+            {% endif %}
+
+            <a href="{% if 'username' in session %}{{ url_for(session.role + '_dashboard') }}{% else %}{{ url_for('login') }}{% endif %}"
+               class="block bg-white rounded-lg border border-gray-200 p-6 text-center hover:border-indigo-400 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                <div class="text-indigo-600 text-5xl mb-4">
+                    <i class="fas fa-{% if 'username' in session %}tachometer-alt{% else %}sign-in-alt{% endif %}"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">{% if 'username' in session %}Kontrol Paneli{% else %}Giriş Yap{% endif %}</h3>
+                <p class="text-gray-600 mb-4">{% if 'username' in session %}Hesabınıza erişin{% else %}Sisteme giriş yapın{% endif %}</p>
+                <span class="inline-block bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors">
+                    {% if 'username' in session %}Git{% else %}Giriş{% endif %} <i class="fas fa-arrow-right ml-2"></i>
+                </span>
+            </a>
+        </div>
+
+        <div class="mt-12 flex flex-col sm:flex-row justify-center gap-4">
+            {% if 'username' not in session %}
+            <a href="{{ url_for('login') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors text-center">
+                <i class="fas fa-sign-in-alt mr-2"></i>Giriş Yap
+            </a>
+            <a href="{{ url_for('register') }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors text-center">
+                <i class="fas fa-user-plus mr-2"></i>Kayıt Ol
+            </a>
+            {% else %}
+            <a href="{{ url_for('logout') }}" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-center">
+                <i class="fas fa-sign-out-alt mr-2"></i>Çıkış Yap
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="bg-gray-50 p-4 text-center text-gray-500 text-sm">
+        © {{ current_year }} Tubitak Projesi | Tüm hakları saklıdır
+        <div class="mt-2 flex justify-center space-x-4">
+            <a href="{{ url_for('contact') }}" class="hover:text-indigo-600">
+                <i class="fas fa-phone mr-1"></i> İletişim: +905517311411 / +905527078451
+            </a>
+            <a href="{{ url_for('about') }}" class="hover:text-indigo-600">
+                <i class="fas fa-info-circle mr-1"></i> Hakkında
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
